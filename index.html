@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>To Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .todo-container {
+            background: #ffffff;
+            width: 420px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: #4a4a4a;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #667eea;
+            color: #fff;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .tabs {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .tabs button {
+            flex: 1;
+            background: #e0e7ff;
+            color: #333;
+        }
+
+        .tabs button.active {
+            background: #667eea;
+            color: #fff;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f3f4f6;
+            border-radius: 6px;
+        }
+
+        li span {
+            color: #333;
+        }
+
+        .done {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .done-btn {
+            background: #22c55e;
+        }
+
+        .undo-btn {
+            background: #f97316;
+        }
+    </style>
+</head>
+<body>
+
+<div class="todo-container">
+    <h2>To Do List</h2>
+
+    <div class="input-group">
+        <input type="text" id="taskInput" placeholder="Nhập công việc">
+        <button onclick="addTask()">Thêm</button>
+    </div>
+
+    <div class="tabs">
+        <button id="pendingTab" class="active" onclick="showPending()">Chưa làm</button>
+        <button id="completedTab" onclick="showCompleted()">Đã làm</button>
+    </div>
+
+    <ul id="taskList"></ul>
+</div>
+
+<script>
+    let tasks = [];
+    let currentTab = "pending";
+
+    function addTask() {
+        const input = document.getElementById("taskInput");
+        const text = input.value.trim();
+        if (text === "") return;
+
+        tasks.push({ name: text, done: false });
+        input.value = "";
+        render();
+    }
+
+    function toggleTask(index) {
+        tasks[index].done = !tasks[index].done;
+        render();
+    }
+
+    function showPending() {
+        currentTab = "pending";
+        setActiveTab();
+        render();
+    }
+
+    function showCompleted() {
+        currentTab = "completed";
+        setActiveTab();
+        render();
+    }
+
+    function setActiveTab() {
+        document.getElementById("pendingTab").classList.toggle("active", currentTab === "pending");
+        document.getElementById("completedTab").classList.toggle("active", currentTab === "completed");
+    }
+
+    function render() {
+        const list = document.getElementById("taskList");
+        list.innerHTML = "";
+
+        tasks.forEach((task, index) => {
+            if (
+                (currentTab === "pending" && task.done) ||
+                (currentTab === "completed" && !task.done)
+            ) return;
+
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <span class="${task.done ? "done" : ""}">${task.name}</span>
+                <button class="${task.done ? "undo-btn" : "done-btn"}"
+                        onclick="toggleTask(${index})">
+                    ${task.done ? "Hoàn tác" : "Xong"}
+                </button>
+            `;
+            list.appendChild(li);
+        });
+    }
+</script>
+
+</body>
+</html>
